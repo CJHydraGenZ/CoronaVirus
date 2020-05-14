@@ -1,15 +1,28 @@
 import axios from 'axios'
 
 
-export const FetchDataIndonesia = async () => {
+
+const URL = 'https://covid19.mathdro.id/api'
+export const FetchDataGlobal = async (negara) => {
+    let DynamicURL = URL
+    if (negara) {
+        DynamicURL = `${URL}/countries/${negara}`
+    }
+    if (negara === 'global') {
+        DynamicURL = URL
+    }
     try {
-        const response = await axios.get(`https://covid19.mathdro.id/api/countries/indonesia`)
-        const DataRes = {
-            konfirmasi: response.data.confirmed.value,
-            meninggal: response.data.deaths.value,
-            sembuh: response.data.recovered.value
-        }
-        return DataRes
+        const { data: { confirmed, deaths, recovered } } = await axios.get(DynamicURL)
+        return { confirmed, deaths, recovered }
+    } catch (error) {
+
+    }
+}
+export const FetchDataCountries = async () => {
+    try {
+        const { data: { countries } } = await axios.get(`https://covid19.mathdro.id/api/countries/`)
+
+        return countries.map(country => country.name)
     } catch (error) {
 
     }
